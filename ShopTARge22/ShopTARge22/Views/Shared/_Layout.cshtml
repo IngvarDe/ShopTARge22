@@ -46,13 +46,18 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Emails" asp-action="Index">Email</a>
                         </li>
+                    </ul>
+                    <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AppRoles" asp-action="Index">Roles</a>
+                            <a class="nav-link text-dark" asp-controller="Accounts" asp-action="Register">Register</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="Accounts" asp-action="Login">Login</a>
                         </li>
                     </ul>
                 </div>
             </div>
-             <partial name="_LoginPartial"/>
+             @* <partial name="_LoginPartial"/> *@
         </nav>
     </header>
     <div class="container">

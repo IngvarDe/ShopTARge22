@@ -28,7 +28,7 @@ namespace ShopTARge22.Controllers
         {
             //if(ModelState.IsValid)
             //{
-                return RedirectToAction("Joke", "ChuckNorris");
+                return RedirectToAction(nameof(Joke));
             //}
 
             //return View(model);

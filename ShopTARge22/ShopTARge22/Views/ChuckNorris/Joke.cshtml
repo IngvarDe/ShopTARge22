@@ -35,4 +35,12 @@
             @Html.DisplayFor(model => model.Value)
         </div>
     </dl>
+    <hr />
+
+    <div class="">
+        <form method="post">
+            <button asp-controller="chuckNorris" asp-action="searchChuckNorrisJokes" class="btn btn-primary">Joke</button>
+        </form>
+        <button asp-controller="chuckNorris" asp-action="index" class="btn btn-primary">Index</button>
+    </div>
 </div>

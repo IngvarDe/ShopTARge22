@@ -21,8 +21,6 @@ namespace ShopTARge22.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            //SearchCityViewModel model = new();
-
             return View();
         }
 
@@ -45,8 +43,6 @@ namespace ShopTARge22.Controllers
 
             _weatherForecastServices.OpenWeatherResult(dto);
             OpenWeatherViewModel vm = new();
-
-
 
             vm.City = dto.City;
             vm.Temp = dto.Temp;

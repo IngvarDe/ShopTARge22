@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopTARge22.Core.Dto;
 using ShopTARge22.Core.ServiceInterface;
 using ShopTARge22.Data;
 using ShopTARge22.Models.Spaceships;
 
+
 namespace ShopTARge22.Controllers
 {
+    [Authorize]
     public class SpaceshipsController : Controller
     {
         private readonly ShopTARge22Context _context;

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using ShopTARge22.Core.Domain;
+using ShopTARge22.Data;
 using ShopTARge22.Models.Accounts;
 using System.Security.Claims;
 
@@ -11,15 +12,18 @@ namespace ShopTARge22.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ShopTARge22Context _context;
 
         public AccountsController
             (
                 UserManager<ApplicationUser> userManager,
-                SignInManager<ApplicationUser> signInManager
+                SignInManager<ApplicationUser> signInManager,
+                ShopTARge22Context context
             )
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _context = context;
         }
 
 
@@ -113,14 +117,26 @@ namespace ShopTARge22.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public IActionResult ResetPassword(string token, string email)
+        public async Task<IActionResult> ResetPassword()
         {
-            if (token == null || email == null)
+            var user = await _userManager.GetUserAsync(User);
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            if (token == null || user.Email == null)
             {
                 ModelState.AddModelError("", "Invalid password reset token");
             }
-            return View();
+
+            var model = new ResetPasswordViewModel
+            {
+                Token = token,
+                Email = user.Email
+            };
+
+            return View(model);
         }
+
+
 
         [HttpPost]
         [AllowAnonymous]
@@ -133,27 +149,37 @@ namespace ShopTARge22.Controllers
                 if (user != null)
                 {
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
-                    
+
                     if (result.Succeeded)
                     {
                         if (await _userManager.IsLockedOutAsync(user))
                         {
                             await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
                         }
-
-                        return View("ResetPasswordConfirmation");
+                        await _signInManager.SignOutAsync();
+                        await _userManager.DeleteAsync(user);
+                        return RedirectToAction("ResetPasswordConfirmation", "Accounts");
                     }
 
                     foreach (var error in result.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
-
-                    return View(model);
+                    //await _userManager.DeleteAsync(user);
+                    return RedirectToAction("ResetPasswordConfirmation", "Accounts");
                 }
-                return View("ResetPasswordConfirmation");
+                await _userManager.DeleteAsync(user);
+                return RedirectToAction("ResetPasswordConfirmation", "Accounts");
             }
-            return View(model);
+            //await _signInManager.SignOutAsync();
+            return RedirectToAction("ResetPasswordConfirmation", "Accounts");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ResetPasswordConfirmation()
+        {
+            return View();
         }
 
         [HttpGet]
